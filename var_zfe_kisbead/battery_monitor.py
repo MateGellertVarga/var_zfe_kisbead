@@ -1,7 +1,10 @@
 """Battery health monitor publishing diagnostic_msgs/DiagnosticArray."""
 
+import signal
+
 from diagnostic_msgs.msg import DiagnosticArray, DiagnosticStatus, KeyValue
 import rclpy
+from rclpy.executors import ExternalShutdownException
 from rclpy.node import Node
 from sensor_msgs.msg import BatteryState
 
@@ -75,9 +78,14 @@ class BatteryMonitor(Node):
 def main(args=None):
     rclpy.init(args=args)
     node = BatteryMonitor()
-    rclpy.spin(node)
-    node.destroy_node()
-    rclpy.shutdown()
+    try:
+        rclpy.spin(node)
+    except (KeyboardInterrupt, ExternalShutdownException):
+        pass  # clean exit on Ctrl+C
+    finally:
+        signal.signal(signal.SIGINT, signal.SIG_IGN)  # ignore repeated Ctrl+C
+        node.destroy_node()
+        rclpy.try_shutdown()
 
 
 if __name__ == '__main__':

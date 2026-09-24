@@ -12,7 +12,7 @@ def generate_launch_description():
             {'tls': False},
             {'certfile': ''},
             {'keyfile': ''},
-            #{'topic_whitelist': "'.*'"},
+            # {'topic_whitelist': "'.*'"},
             {'max_qos_depth': 10},
             {'num_threads': 0},
             {'use_sim_time': False},

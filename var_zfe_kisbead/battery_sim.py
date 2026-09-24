@@ -1,8 +1,10 @@
 """Simulated robot battery publishing sensor_msgs/BatteryState."""
 
 import random
+import signal
 
 import rclpy
+from rclpy.executors import ExternalShutdownException
 from rclpy.node import Node
 from sensor_msgs.msg import BatteryState
 
@@ -72,9 +74,14 @@ class BatterySim(Node):
 def main(args=None):
     rclpy.init(args=args)
     node = BatterySim()
-    rclpy.spin(node)
-    node.destroy_node()
-    rclpy.shutdown()
+    try:
+        rclpy.spin(node)
+    except (KeyboardInterrupt, ExternalShutdownException):
+        pass  # clean exit on Ctrl+C
+    finally:
+        signal.signal(signal.SIGINT, signal.SIG_IGN)  # ignore repeated Ctrl+C
+        node.destroy_node()
+        rclpy.try_shutdown()
 
 
 if __name__ == '__main__':
