@@ -29,5 +29,5 @@ source ~/ros2_ws/install/setup.bash
 </details>
 
 ``` r
-ros2 launch var_zfe_kisbead launch_example1.launch.py
+ros2 launch var_zfe_kisbead battery.launch.py
 ```
