@@ -6,7 +6,6 @@ from launch_ros.parameter_descriptions import ParameterValue
 
 
 def float_arg(name):
-    """Pass a launch argument to a node as a float parameter."""
     return ParameterValue(LaunchConfiguration(name), value_type=float)
 
 

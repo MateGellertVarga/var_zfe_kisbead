@@ -1,5 +1,3 @@
-"""Battery health monitor publishing diagnostic_msgs/DiagnosticArray."""
-
 import signal
 
 from diagnostic_msgs.msg import DiagnosticArray, DiagnosticStatus, KeyValue
@@ -10,8 +8,6 @@ from sensor_msgs.msg import BatteryState
 
 
 class BatteryMonitor(Node):
-    """Classify /battery_state into OK / WARN / ERROR / STALE diagnostics."""
-
     LEVEL_NAMES = {
         DiagnosticStatus.OK: 'OK',
         DiagnosticStatus.WARN: 'WARN',
@@ -21,9 +17,9 @@ class BatteryMonitor(Node):
 
     def __init__(self):
         super().__init__('battery_monitor')
-        self.declare_parameter('warn_level', 0.3)    # below 30 % -> WARN
-        self.declare_parameter('error_level', 0.1)   # below 10 % -> ERROR
-        self.declare_parameter('timeout', 3.0)       # s without data -> STALE
+        self.declare_parameter('warn_level', 0.3)
+        self.declare_parameter('error_level', 0.1)
+        self.declare_parameter('timeout', 3.0)  # s
 
         self.last_msg = None
         self.last_time = None
@@ -35,12 +31,10 @@ class BatteryMonitor(Node):
         self.get_logger().info('battery_monitor started, publishing /diagnostics')
 
     def battery_callback(self, msg):
-        """Store the latest battery message."""
         self.last_msg = msg
         self.last_time = self.get_clock().now()
 
     def evaluate(self):
-        """Return (level, message) for the current battery state."""
         timeout = self.get_parameter('timeout').value
         if self.last_msg is None:
             return DiagnosticStatus.STALE, 'No battery data yet'
@@ -57,7 +51,6 @@ class BatteryMonitor(Node):
         return DiagnosticStatus.OK, f'Battery OK ({pct:.0%})'
 
     def loop(self):
-        """Publish the diagnostic status once per second."""
         level, text = self.evaluate()
         status = DiagnosticStatus(
             level=level, name='battery_monitor: Battery', message=text, hardware_id='battery')
@@ -70,7 +63,7 @@ class BatteryMonitor(Node):
         array.header.stamp = self.get_clock().now().to_msg()
         self.pub.publish(array)
 
-        if level != self.last_level:  # log only on state change
+        if level != self.last_level:
             self.get_logger().info(f'[{self.LEVEL_NAMES[level]}] {text}')
             self.last_level = level
 
@@ -81,9 +74,9 @@ def main(args=None):
     try:
         rclpy.spin(node)
     except (KeyboardInterrupt, ExternalShutdownException):
-        pass  # clean exit on Ctrl+C
+        pass
     finally:
-        signal.signal(signal.SIGINT, signal.SIG_IGN)  # ignore repeated Ctrl+C
+        signal.signal(signal.SIGINT, signal.SIG_IGN)
         node.destroy_node()
         rclpy.try_shutdown()
 
