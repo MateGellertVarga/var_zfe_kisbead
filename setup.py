@@ -23,7 +23,7 @@ setup(
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
-            # 'battery_sim = var_zfe_kisbead.battery_sim:main',
+            'battery_sim = var_zfe_kisbead.battery_sim:main',
         ],
     },
 )
