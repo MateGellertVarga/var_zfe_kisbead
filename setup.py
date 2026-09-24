@@ -24,6 +24,7 @@ setup(
     entry_points={
         'console_scripts': [
             'battery_sim = var_zfe_kisbead.battery_sim:main',
+            'battery_monitor = var_zfe_kisbead.battery_monitor:main',
         ],
     },
 )
