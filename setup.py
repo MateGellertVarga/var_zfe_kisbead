@@ -2,7 +2,7 @@ from setuptools import find_packages, setup
 from glob import glob
 import os
 
-package_name = 'ros2_py_template'
+package_name = 'var_zfe_kisbead'
 
 setup(
     name=package_name,
@@ -16,14 +16,14 @@ setup(
     ],
     install_requires=['setuptools'],
     zip_safe=True,
-    maintainer='todo',
-    maintainer_email='todo@todo.com',
-    description='TODO: Package description',
+    maintainer='Varga Máté Gellért',
+    maintainer_email='vargamategellert@gmail.com',
+    description='Simulated battery publisher and battery health monitor (sensor_msgs/BatteryState, diagnostic_msgs/DiagnosticArray)',
     license='GNU General Public License v3.0',
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
-            # 'control_vehicle = ros2_py_template.control_vehicle:main',
+            # 'battery_sim = var_zfe_kisbead.battery_sim:main',
         ],
     },
 )

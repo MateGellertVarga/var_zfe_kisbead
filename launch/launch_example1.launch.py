@@ -25,7 +25,7 @@ def generate_launch_description():
             ]
         ),
         # Node(
-        #     package='ros2_python_template',
+        #     package='var_zfe_kisbead',
         #     executable='simple_sub_node',
         #     output='screen',
         # ),
