@@ -1,0 +1,51 @@
+name: ROS 2 Humble build
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-22.04
+    container: ros:humble
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          path: ros2_ws/src/var_zfe_kisbead
+
+      - name: Install dependencies
+        working-directory: ros2_ws
+        run: |
+          apt-get update
+          rosdep update
+          rosdep install --from-paths src --ignore-src -y
+
+      - name: Build
+        working-directory: ros2_ws
+        run: |
+          source /opt/ros/humble/setup.bash
+          colcon build --packages-select var_zfe_kisbead --symlink-install
+
+      - name: Test
+        working-directory: ros2_ws
+        run: |
+          source /opt/ros/humble/setup.bash
+          colcon test --packages-select var_zfe_kisbead
+          colcon test-result --verbose
+
+      - name: Launch smoke test
+        working-directory: ros2_ws
+        run: |
+          source install/setup.bash
+          timeout -s INT 15 ros2 launch var_zfe_kisbead battery.launch.py discharge_rate:=0.1 \
+            > launch.log 2>&1 || true
+          cat launch.log
+          grep -q 'battery_sim started' launch.log
+          grep -q 'battery_monitor started' launch.log
+          grep -q '\[OK\] Battery OK' launch.log
+          grep -q '\[WARN\] Low battery' launch.log
+          ! grep -q 'Traceback' launch.log
